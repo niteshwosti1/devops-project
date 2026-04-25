@@ -15,6 +15,27 @@ app.get('/tasks', (req, res) => {
   res.json(tasks);
 });
 
+app.get('/tasks/:id',(req,res) => {
+  const task = tasks.find(t=>t.id === Number.parseInt(req.params.id))
+  if(!task) return res.status(404).json({error:'Task not found'})
+  res.json(task)
+})
+
+app.delete('/tasks/:id',(req,res)=>{
+  const taskID = Number.parseInt(req.params.id);
+
+  if (Number.isNaN(taskID)){
+    return res.status(404).json({error:"Invalid Task Id"})
+  } 
+  const index = tasks.findIndex(t=>t.id === taskID);
+  if (index === -1){
+    return res.status(404).json("error: Task not found")
+  }
+  const deletedTask = tasks.splice(index,1)
+  res.status(200).json({message:"Task Deleted Successfully", task: deletedTask[0]})
+
+})
+
 // Create a task
 app.post('/tasks', (req, res) => {
   const { title } = req.body;
